@@ -4,51 +4,86 @@ import java.util.*
 
 fun main() {
     val convertor = Convertor()
-    convertor.magic()
-    convertor.printResult()
+    convertor.start()
 }
 
 class Convertor {
-    var number = 0
+    val scanner = Scanner(System.`in`)
+    var exit = false
     var base = 0
-//    var result = 0
+
+    var number = 0
+    var nomber2 = ""
     var result = ""
+    var result2 = 0
     val list: MutableList<Char> = mutableListOf<Char>()
+    val list2: MutableList<Int> = mutableListOf<Int>()
 
-    constructor() {
-        readInput()
+    fun clear() {
+        result = ""
+        result2 = 0
+        list.clear()
+        list2.clear()
     }
 
-    fun printResult() {
-        print("Conversion result: $result")
-    }
-
-    fun magic() {
-        var n = number
-        var v = 0
-        var r = 0
-        while (n != 0) {
-            r = n % base
-            n /= base
-            list += when (r) {
-                in 0..9 -> '1' - 1 + r
-                else -> 'A' - 10 + r
-            }
-//            println(list)
-        }
-
-        for (i in list.size - 1 downTo 0) {
-//            println(list.get(i))
-//            result += result * 10 + list.get(i)
-            result += "" + list.get(i)
+    fun start() {
+        while (!exit) {
+            clear()
+            readInput()
         }
     }
 
     fun readInput() {
-        val sc = Scanner(System.`in`)
+        print("Do you want to convert /from decimal or /to decimal? (To quit type /exit) ")
+        when (scanner.next()) {
+            "/from" -> fromDecimal()
+            "/to" -> toDecimal()
+            else -> exit = true
+        }
+    }
+
+    private fun toDecimal() {
+        print("Enter source number: ")
+        nomber2 = scanner.next().toLowerCase()
+        print("Enter source base: ")
+        base = scanner.nextInt()
+
+        for (i in 0 until nomber2.length) {
+            list2 += when {
+                nomber2[i].isDigit() -> nomber2[i] - '1' + 1
+                else -> {
+                    nomber2[i] - 'a' + 10
+                }
+            }
+        }
+
+        for (i in 0 until list2.size) {
+            result2 = result2 + list2.get(i) * Math.pow(base.toDouble(), (list2.size - 1 - i).toDouble()).toInt()
+        }
+
+        println("Conversion to decimal result: $result2\n")
+    }
+
+    private fun fromDecimal() {
         print("Enter number in decimal system: ")
-        number= sc.nextInt()
+        number = scanner.nextInt()
         print("Enter target base: ")
-        base = sc.nextInt()
+        base = scanner.nextInt()
+
+        var r = 0
+        while (number != 0) {
+            r = number % base
+            number /= base
+            list += when (r) {
+                in 0..9 -> '1' + r - 1
+                else -> 'A' + r - 10
+            }
+        }
+
+        for (i in list.size - 1 downTo 0) {
+            result += "" + list.get(i)
+        }
+
+        print("Conversion result: $result\n\n")
     }
 }
